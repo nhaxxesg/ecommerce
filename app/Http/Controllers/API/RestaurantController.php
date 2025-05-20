@@ -10,8 +10,10 @@ use Illuminate\Http\JsonResponse;
 /**
  * @OA\Tag(
  *     name="Restaurantes",
- *     description="API Endpoints de restaurantes"
+ *     description="Operaciones con restaurantes"
  * )
+
+**/
 use OpenApi\Annotations as OA;
 
 /**
@@ -38,7 +40,16 @@ class RestaurantController extends Controller
      *     tags={"Restaurantes"},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de restaurantes con ubicación"
+     *         description="Lista de restaurantes con ubicación",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="latitude", type="number"),
+     *                 @OA\Property(property="longitude", type="number")
+     *             )
+     *         )
      *     )
      * )
      */
@@ -51,13 +62,17 @@ class RestaurantController extends Controller
     /**
      * @OA\Get(
      *     path="/api/restaurants",
-     *     summary="Listar restaurantes",
+     *     summary="Listar todos los restaurantes",
      *     tags={"Restaurantes"},
-     *     security={{ "bearerAuth": {} }},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de restaurantes"
-     *     )
+     *         description="Lista de restaurantes",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Restaurant")
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
      * )
      */
     public function index(): JsonResponse
@@ -70,19 +85,24 @@ class RestaurantController extends Controller
     /**
      * @OA\Post(
      *     path="/api/restaurants",
-     *     summary="Crear un restaurante",
+     *     summary="Crear un nuevo restaurante",
      *     tags={"Restaurantes"},
-     *     security={{ "bearerAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Restaurant")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Restaurante creado"
-     *     )
+     *         description="Restaurante creado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/Restaurant")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación"
+     *     ),
+     *     security={{ "bearerAuth": {} }}
      * )
-     */
+    **/
     public function store(Request $request): JsonResponse
     {
         // Validar los datos del restaurante
@@ -104,6 +124,30 @@ class RestaurantController extends Controller
         return response()->json($restaurant, 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/restaurants/{id}",
+     *     summary="Obtener un restaurante específico",
+     *     tags={"Restaurantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del restaurante",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles del restaurante",
+     *         @OA\JsonContent(ref="#/components/schemas/Restaurant")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurante no encontrado"
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
     public function show(Restaurant $restaurant): JsonResponse
     {
         // Cargar los menús del día actual
