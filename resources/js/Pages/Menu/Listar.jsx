@@ -13,8 +13,6 @@ function menu() {
             }
         >
             <RestaurantMenu />
-
-
         </AuthenticatedLayout>
     );
 }
