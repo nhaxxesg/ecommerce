@@ -14,6 +14,14 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/menus/listar', function () {
+    return Inertia::render('Menu/Listar');
+})->middleware(['auth', 'verified'])->name('ListarMenus');
+
+Route::get('/menus/create', function () {
+    return Inertia::render('Menu/Crear');
+})->middleware(['auth', 'verified'])->name('CrearMenus');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
