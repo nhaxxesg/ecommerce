@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\User;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -37,6 +39,7 @@ class MenuController extends Controller
     {
         // Validar los datos del menú
         $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'restaurant_id' => 'required|exists:restaurants,id',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -47,8 +50,10 @@ class MenuController extends Controller
         ]);
 
         // Verificar que el usuario es propietario del restaurante
-        $restaurant = \App\Models\Restaurant::find($validated['restaurant_id']);
-        if ($restaurant->user_id !== auth()->id()) {
+        $user = User::findOrFail($request->user_id);
+        $restaurant = Restaurant::findOrFail($validated['restaurant_id']);
+        
+        if ($restaurant->user_id !== $user->id || $user->role !== 'propietario') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -59,12 +64,9 @@ class MenuController extends Controller
 
     public function update(Request $request, Menu $menu): JsonResponse
     {
-        // Verificar que el usuario es propietario del restaurante
-        if ($menu->restaurant->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
+        // Validar los datos
         $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
@@ -74,15 +76,28 @@ class MenuController extends Controller
             'is_available' => 'sometimes|boolean',
         ]);
 
+        // Verificar que el usuario es propietario del restaurante
+        $user = User::findOrFail($request->user_id);
+        
+        if ($menu->restaurant->user_id !== $user->id || $user->role !== 'propietario') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $menu->update($validated);
         
         return response()->json($menu);
     }
 
-    public function destroy(Menu $menu): JsonResponse
+    public function destroy(Request $request, Menu $menu): JsonResponse
     {
         // Verificar que el usuario es propietario del restaurante
-        if ($menu->restaurant->user_id !== auth()->id()) {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        
+        if ($menu->restaurant->user_id !== $user->id || $user->role !== 'propietario') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

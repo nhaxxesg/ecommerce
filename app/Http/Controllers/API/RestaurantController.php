@@ -8,12 +8,28 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 /**
+ * @OA\Schema(
+ *     schema="Restaurant",
+ *     required={"name", "address", "schedule", "contact_info", "latitude", "longitude", "user_id"},
+ *     @OA\Property(property="id", type="integer", format="int64"),
+ *     @OA\Property(property="name", type="string", maxLength=255),
+ *     @OA\Property(property="address", type="string"),
+ *     @OA\Property(property="schedule", type="string"),
+ *     @OA\Property(property="contact_info", type="string"),
+ *     @OA\Property(property="latitude", type="number", format="float"),
+ *     @OA\Property(property="longitude", type="number", format="float"),
+ *     @OA\Property(property="user_id", type="integer", format="int64"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
+
+/**
  * @OA\Tag(
  *     name="Restaurantes",
  *     description="Operaciones con restaurantes"
  * )
-
-**/
+ */
 use OpenApi\Annotations as OA;
 
 /**
@@ -57,9 +73,7 @@ class RestaurantController extends Controller
     {
         $restaurants = Restaurant::select('id', 'name', 'latitude', 'longitude')->get();
         return response()->json($restaurants);
-    }
-
-    /**
+    }    /**
      * @OA\Get(
      *     path="/api/restaurants",
      *     summary="Listar todos los restaurantes",
@@ -69,12 +83,21 @@ class RestaurantController extends Controller
      *         description="Lista de restaurantes",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Restaurant")
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="address", type="string"),
+     *                 @OA\Property(property="schedule", type="string"),
+     *                 @OA\Property(property="contact_info", type="string"),
+     *                 @OA\Property(property="latitude", type="number"),
+     *                 @OA\Property(property="longitude", type="number"),
+     *                 @OA\Property(property="user_id", type="integer")
+     *             )
      *         )
      *     ),
      *     security={{ "bearerAuth": {} }}
      * )
-     */
+     **/
     public function index(): JsonResponse
     {
         // Obtener todos los restaurantes con su ubicación para el mapa
