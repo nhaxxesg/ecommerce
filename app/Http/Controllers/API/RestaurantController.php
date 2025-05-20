@@ -113,12 +113,10 @@ class RestaurantController extends Controller
             'contact_info' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         // Asignar el usuario actual como propietario
-        $validated['user_id'] = auth()->id();
-        
-        // Crear el restaurante
         $restaurant = Restaurant::create($validated);
         
         return response()->json($restaurant, 201);
@@ -161,10 +159,6 @@ class RestaurantController extends Controller
 
     public function update(Request $request, Restaurant $restaurant): JsonResponse
     {
-        // Verificar si el usuario es el propietario
-        if ($restaurant->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
 
         // Validar y actualizar
         $validated = $request->validate([
@@ -183,11 +177,6 @@ class RestaurantController extends Controller
 
     public function destroy(Restaurant $restaurant): JsonResponse
     {
-        // Verificar si el usuario es el propietario
-        if ($restaurant->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $restaurant->delete();
         
         return response()->json(null, 204);

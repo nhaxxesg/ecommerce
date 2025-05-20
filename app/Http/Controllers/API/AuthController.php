@@ -19,7 +19,7 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/register",
-     *     summary="Registrar un nuevo usuario",
+     *     summary="Registrar un nuevo usuario (autenticación básica)",
      *     tags={"Autenticación"},
      *     @OA\RequestBody(
      *         required=true,
