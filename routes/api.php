@@ -5,12 +5,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RestaurantController;
 use App\Http\Controllers\API\MenuController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Rutas de autenticación
+Route::post('auth/register', [AuthController::class, 'register']);
+Route::post('auth/login', [AuthController::class, 'login']);
 
 // Ruta de prueba
 Route::get('/test', function () {
@@ -23,11 +28,20 @@ Route::get('menus/search', [MenuController::class, 'search']); // RF-3: Búsqued
 
 // Rutas protegidas por autenticación
 Route::middleware('auth:sanctum')->group(function () {
-    // Rutas de restaurantes (RF-8)
-    Route::apiResource('restaurants', RestaurantController::class);
+    // Ruta de logout
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+
+    // Rutas de restaurantes (RF-8) - Solo propietarios pueden gestionar restaurantes
+    Route::middleware('role:propietario')->group(function () {
+        Route::apiResource('restaurants', RestaurantController::class)->except(['index', 'show']);
+    });
+    Route::apiResource('restaurants', RestaurantController::class)->only(['index', 'show']);
     
-    // Rutas de menús (RF-2)
-    Route::apiResource('menus', MenuController::class);
+    // Rutas de menús (RF-2) - Solo propietarios pueden gestionar menús
+    Route::middleware('role:propietario')->group(function () {
+        Route::apiResource('menus', MenuController::class)->except(['index', 'show']);
+    });
+    Route::apiResource('menus', MenuController::class)->only(['index', 'show']);
     
     // Rutas de pedidos (RF-4, RF-5, RF-6)
     Route::get('orders', [OrderController::class, 'index']);
