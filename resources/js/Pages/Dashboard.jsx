@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { router } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import React, { useState } from 'react';
 import Modal1 from '@/Components/Modal1';
@@ -6,7 +7,7 @@ import Modal1 from '@/Components/Modal1';
 
 export default function Dashboard() {
     const Redireccionar = (buttonName) => {
-        Inertia.visit(route(buttonName));
+        router.visit(route(buttonName));
     };
 
     const [isModalOpen, setModalOpen] = useState(false);
