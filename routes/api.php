@@ -6,6 +6,7 @@ use App\Http\Controllers\API\RestaurantController;
 use App\Http\Controllers\API\MenuController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PaypalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,7 @@ Route::post('orders', [OrderController::class, 'store']);
 Route::get('orders/{order}', [OrderController::class, 'show']);
 Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus']);
 Route::post('orders/{order}/deliver', [OrderController::class, 'markAsDelivered']);
+Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+
+// Rutas para paypal
+Route::post('paypal/getAccessToken', [PaypalController::class, 'getAccessToken']);
