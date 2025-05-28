@@ -1,104 +1,59 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { router } from '@inertiajs/react';
-import Modal1 from '@/Components/Modal1';
+import Sidebar from '@/Components/Sidebar';
+import PayPalButton from '@/Components/PayPalButton';
 
 export default function Dashboard() {
-     const Redireccionar = (buttonName) => {
-        router.visit(route(buttonName));
-    };
-
-    const [isModalOpen, setModalOpen] = useState(false);
-    const paypalRef = useRef(null);
-
-    const redirectTo = (routeName) => {
-        router.visit(route(routeName));
-    };
-
-    useEffect(() => {
-        const loadPayPalScript = () => {
-            const script = document.createElement('script');
-            script.src = 'https://www.paypal.com/sdk/js?client-id=AX1KEHhem6-_NEIUQEN3q-QrIv1HPFIOZkvRODv1C8hhqQOQ9eAKiwuXUfPQkXISnaxvSwZygw8k7mbC&currency=USD';
-            script.async = true;
-            script.onload = () => renderButton();
-            document.body.appendChild(script);
-        };
-
-        const renderButton = () => {
-            if (!window.paypal || !paypalRef.current) return;
-
-            window.paypal.Buttons({
-                style: {
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal'
-                },
-                createOrder: (data, actions) => {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: {
-                                value: '230.00',
-                                currency_code: 'USD'
-                            }
-                        }]
-                    });
-                },
-                onApprove: (data, actions) => {
-                    return actions.order.capture().then(details => {
-                        alert(`Pago completado por ${details.payer.name.given_name}`);
-                    });
-                },
-                onError: (err) => {
-                    console.error('PayPal error:', err);
-                    alert('Error en el proceso de pago');
-                }
-            }).render(paypalRef.current);
-        };
-
-        if (!window.paypal) {
-            loadPayPalScript();
-        } else {
-            renderButton();
-        }
-
-        return () => {
-            if (window.paypal) window.paypal.Buttons().close(paypalRef.current);
-        };
-    }, []);
 
     return (
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Dashboard</h2>}
         >
-            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-                <div ref={paypalRef} id="paypal-button-container" className="mb-6" />
 
-                <div className="min-h-screen items-center justify-center flex flex-col gap-4">
-                    {/* Contenedor para el botón de PayPal */}
-                    <div ref={paypalRef} id="paypal-button-container" className="mb-6"></div>
-                    <div className='grid gap-4 grid-cols-1 md:grid-cols-3'>
-                        <div className="p-6 border flex border-[#acacaf] rounded-lg shadow-lg">
-                            <button className="mt-4 bg-[#FFDF7B] text-black text-sm px-4 py-2 rounded hover:bg-[#FFDF7B] w-64"
-                                onClick={() => setModalOpen(true)}>
-                                Menus
-                            </button>
+            <div className="flex min-h-screen">
+                {/* Sidebar */}
+                <Sidebar />
 
-                            <Modal1 isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-                                <div className='flex items-center justify-between'>
-                                    <h2 className='text-x1 font-semibold'>Opciones</h2>
+                {/* Main Content */}
+                <div className="flex-1 ml-64 p-8">
+                    {/* PayPal button en la esquina superior derecha */}
+                    <div className="fixed bottom-10 right-8 z-10 w-64">
+                        <PayPalButton />
+                    </div>
+
+                    {/* Contenido principal */}
+                    <div className="mt-20">
+                        <div className="grid grid-cols-5 gap-16">
+                            <div className="col-start-2s row-start-1 w-72 h-72 border rounded-lg shadow-lg overflow-hidden">
+                                <div className="h-1/2 bg-gray-200">
+                                    <img
+                                        src="https://via.placeholder.com/150"
+                                        alt="Placeholder"
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-                                <div className='items-center justify-center flex flex-col gap-4'>
-                                    <div className='grid gap-4 grid-cols-1 md:grid-cols-3'>
-                                        <div>
-                                            <button onClick={() => Redireccionar('ListarMenus')}>Lista de Menus</button>
-                                        </div>
-                                        <div>
-                                            <button onClick={() => Redireccionar('CrearMenus')}>Crear Menus</button>
-                                        </div>
+                                <div className="relative h-1/2 p-4">
+                                    <h3 className="text-lg font-semibold">Título del Texto</h3>
+                                    {/* <p className="text-sm text-gray-600 mt-2">
+                                        Este es un ejemplo de texto que acompaña a la imagen. Puedes personalizarlo según tus necesidades.
+                                    </p> */}
+                                    <div className='absolute top-3 right-2 p-2 bg-blue-100 text-sm text-blue-900'>
+                                        puntuacion ⭐
+
                                     </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600 mt-2">
+                                            Este es un ejemplo de texto que acompaña a la imagen. Puedes personalizarlo según tus necesidades.
+                                        </p>
+                                    </div>
+                                    {/* <div class="relative w-64 h-40 bg-gray-200 border border-gray-400">
+                                        <div class="absolute top-0 right-0 p-2 bg-blue-100 text-sm text-blue-900">
+                                            Texto en esquina
+                                        </div>
+                                    </div> */}
+
                                 </div>
-                            </Modal1>
+                            </div>
                         </div>
                     </div>
                 </div>
