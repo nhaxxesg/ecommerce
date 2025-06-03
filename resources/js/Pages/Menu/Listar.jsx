@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import RestaurantMenu from '@/Components/RestaurantMenu';
+import MenuList from '@/Components/MenuList';
 
 function menu() {
 
@@ -12,7 +12,7 @@ function menu() {
                 </h2>
             }
         >
-            <RestaurantMenu />
+            <MenuList />
         </AuthenticatedLayout>
     );
 }
