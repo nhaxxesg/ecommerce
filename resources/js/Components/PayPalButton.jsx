@@ -1,18 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function PayPalButton() {
+export default function PayPalButton({ amount, onSuccess, onError }) {
     const paypalRef = useRef(null);
 
     useEffect(() => {
-        const loadPayPalScript = () => {
+        // Elimina el botón anterior si existe
+        if (paypalRef.current) {
+            paypalRef.current.innerHTML = '';
+        }
+
+        // Carga el script de PayPal solo si no está cargado
+        if (!window.paypal) {
             const script = document.createElement('script');
             script.src = 'https://www.paypal.com/sdk/js?client-id=AX1KEHhem6-_NEIUQEN3q-QrIv1HPFIOZkvRODv1C8hhqQOQ9eAKiwuXUfPQkXISnaxvSwZygw8k7mbC&currency=USD';
             script.async = true;
             script.onload = () => renderButton();
             document.body.appendChild(script);
-        };
+        } else {
+            renderButton();
+        }
 
-        const renderButton = () => {
+        function renderButton() {
             if (!window.paypal || !paypalRef.current) return;
 
             window.paypal.Buttons({
@@ -26,7 +34,7 @@ export default function PayPalButton() {
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: '230.00',
+                                value: amount.toFixed(2),
                                 currency_code: 'USD'
                             }
                         }]
@@ -34,14 +42,16 @@ export default function PayPalButton() {
                 },
                 onApprove: (data, actions) => {
                     return actions.order.capture().then(details => {
-                        alert(`Transaction completed by ${details.payer.name.given_name}`);
+                        if (onSuccess) onSuccess(details);
                     });
+                },
+                onError: (err) => {
+                    if (onError) onError(err);
                 }
             }).render(paypalRef.current);
-        };
-
-        loadPayPalScript();
-    }, []);
+        }
+        // eslint-disable-next-line
+    }, [amount, onSuccess, onError]);
 
     return (
         <div ref={paypalRef} id="paypal-button-container" />

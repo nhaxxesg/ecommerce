@@ -7,6 +7,7 @@ use App\Http\Controllers\API\MenuController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PaypalController;
+use App\Http\Controllers\API\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,12 +35,12 @@ Route::apiResource('restaurants', RestaurantController::class);
 Route::apiResource('menus', MenuController::class);
 
 // Rutas de pedidos
-Route::get('orders', [OrderController::class, 'index']);
-Route::post('orders', [OrderController::class, 'store']);
-Route::get('orders/{order}', [OrderController::class, 'show']);
-Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus']);
-Route::post('orders/{order}/deliver', [OrderController::class, 'markAsDelivered']);
-Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+Route::apiResource('orders', OrderController::class);
 
 // Rutas para paypal
 Route::post('paypal/getAccessToken', [PaypalController::class, 'getAccessToken']);
+
+// Rutas de pagos
+Route::apiResource('payments', PaymentController::class);
+
+Route::post('/orders/completar-pago', [OrderController::class, 'completarPago']);

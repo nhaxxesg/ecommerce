@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('address');
             $table->string('schedule');
+            $table->string('image')->nullable();
             $table->text('contact_info');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);

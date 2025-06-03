@@ -3,17 +3,29 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ShoppingCar from '@/Components/ShoppingCar';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const [cart, setCart] = useState(() => {
+        // Leer carrito de localStorage al iniciar
+        const stored = localStorage.getItem('cart');
+        return stored ? JSON.parse(stored) : [];
+    });
+    const [showCart, setShowCart] = useState(false);
+
+    // Guardar carrito en localStorage cada vez que cambie
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
+            <nav className="fixed top-0 left-0 w-full z-40 border-b border-gray-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
@@ -117,6 +129,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     />
                                 </svg>
                             </button>
+
                         </div>
                     </div>
                 </div>
@@ -146,6 +159,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </div>
 
+
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>
                                 Profile
@@ -161,7 +175,15 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
             </nav>
-
+            {/* Carrito flotante */}
+            {showCart && (
+                <ShoppingCar
+                    cart={cart}
+                    setCart={setCart}
+                    onPay={() => setShowCart(false)}
+                    show={showCart}
+                />
+            )}
             {header && (
                 <header className="bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -170,7 +192,29 @@ export default function AuthenticatedLayout({ header, children }) {
                 </header>
             )}
 
-            <main>{children}</main>
+            <main>
+                {React.cloneElement(children, { cart, setCart })}
+            </main>
+
+            {/*
+                Botón flotante para abrir/cerrar el carrito
+            */}
+            <button
+                className={`
+        fixed top-1/2 right-0 z-50 bg-blue-600 text-white rounded-l-full px-4 py-3 shadow-lg hover:bg-blue-700 transition-all duration-300
+        ${showCart ? 'translate-x-full opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'}
+    `}
+                style={{ transform: 'translateY(-50%)' }}
+                onClick={() => setShowCart(true)}
+                aria-label="Abrir carrito"
+            >
+                🛒
+                {cart.length > 0 && (
+                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2">
+                        {cart.reduce((a, b) => a + b.quantity, 0)}
+                    </span>
+                )}
+            </button>
         </div>
     );
 }
