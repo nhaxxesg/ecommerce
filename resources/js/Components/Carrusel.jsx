@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const images = [
-    'storage/imagenes/1.jpg',
-    'storage/imagenes/cachedimage.png',
-    'storage/imagenes/xd.png',
+    'storage/imagenes/comida1.jpg',
+    'storage/imagenes/comida2.jpg',
+    'storage/imagenes/comida3.jpg',
 ];
 
 function Carrusel() {

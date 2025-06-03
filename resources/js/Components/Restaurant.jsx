@@ -19,7 +19,7 @@ function Restaurant() {
                 {data.map((restaurant) => (
                     <div
                         key={restaurant.id}
-                        className="col-start-1 row-start-1 w-72 h-72 border rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
+                        className=" w-72 h-72 border rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
                         onClick={() => handleClick(restaurant.id)}
                     >
                         <div className="h-1/2 bg-gray-200">
