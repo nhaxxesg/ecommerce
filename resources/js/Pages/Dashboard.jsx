@@ -1,7 +1,6 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import RestaurantInfo from '@/Components/RestaurantInfo';
-import Carrusel from '@/Components/carrusel';
+import Carrusel from '@/Components/Carrusel';
 import Restaurant from '@/Components/Restaurant';
 
 function DashboardContent(props) {
