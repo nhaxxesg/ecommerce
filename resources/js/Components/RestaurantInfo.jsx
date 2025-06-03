@@ -6,7 +6,7 @@ function RestaurantInfo({ restaurantId, cart = [], setCart = () => {} }) {
     // Menús del restaurante (esto está bien)
     const { data: menu, loading: loadingMenus, error: errorMenus } = useAxiosFetch(`/api/menus?restaurant_id=${restaurantId}`, true);
     // Imágenes del restaurante (usa la ruta correcta)
-    const { data: images, loading: loadingImgs, error: errorImgs } = useAxiosFetch(`/imagenes/${restaurantId}`, true);
+    const { data: images, loading: loadingImgs, error: errorImgs } = useAxiosFetch(`/api/imagenes?restaurant_id=${restaurantId}`, true);
 
     const [currentImg, setCurrentImg] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);

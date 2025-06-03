@@ -8,6 +8,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PaypalController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\Api\ImagenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,5 +43,10 @@ Route::post('paypal/getAccessToken', [PaypalController::class, 'getAccessToken']
 
 // Rutas de pagos
 Route::apiResource('payments', PaymentController::class);
+
+// Rutas de imágenes
+Route::get('/imagenes', [ImagenController::class, 'index'])->name('api.imagenes.index');
+Route::post('/imagenes', [ImagenController::class, 'store'])->name('api.imagenes.store');
+Route::delete('/imagenes/{id}', [ImagenController::class, 'destroy'])->name('api.imagenes.destroy');
 
 Route::post('/orders/completar-pago', [OrderController::class, 'completarPago']);
